@@ -26,11 +26,13 @@
 #include "opencv2/xfeatures2d/nonfree.hpp"
 
 // SAVE_IMG 0; png & 1; jpg 
-#define SAVE_IMG 0
+#define SAVE_IMG 1
 // Publish Synced Images
 #define PUBLISH_SYNCED_IMGS true
 
 int sequence = 0;
+int cnt = 1;
+double latest_time = 0;
 
 std::queue<sensor_msgs::CompressedImageConstPtr> img_buf;
 std::queue<sensor_msgs::ImageConstPtr> depth_buf;

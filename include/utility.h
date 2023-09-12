@@ -4,12 +4,7 @@
 cv::Mat sensorMsg2cvMat(const sensor_msgs::CompressedImageConstPtr &img_msg)
 {
     cv_bridge::CvImageConstPtr ptr;
-    // ptr -> header = img_msg -> header;
-    // ptr -> image = cv::imdecode(cv::Mat(img_msg -> data), cv::IMREAD_COLOR);
-    // // Can change cv::IMREAD_GRAYSCALE / cv::IMREAD_COLOR / cv::IMREAD_UNCHANGED
-    // ptr -> encoding = "bgr8";
     ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::BGRA8);
-
     cv::Mat img = ptr->image.clone();
     cv::cvtColor(img, img, cv::COLOR_BGRA2BGR);
 
@@ -88,13 +83,24 @@ sensor_msgs::Image cvMatDepth2sensorMsg(cv::Mat image, std_msgs::Header header)
 	return img;
 }
 
-void pubSyncImgs(std_msgs::Header header, cv::Mat depth, cv::Mat infra1, cv::Mat infra2, sensor_msgs::CameraInfo cam1Info, sensor_msgs::CameraInfo cam2Info)
+void pubSyncImgs(std_msgs::Header header, cv::Mat color, cv::Mat depth, cv::Mat infra1)
 {
+    pub_img.publish(cvMat2sensorMsg(color, header));
     pub_depth.publish(cvMatDepth2sensorMsg(depth, header));
     pub_infra1.publish(cvMat2sensorMsg(infra1, header));
-    pub_infra2.publish(cvMat2sensorMsg(infra2, header));
-    
-    pub_infra1_info.publish(cam1Info);
-    pub_infra2_info.publish(cam2Info);
+}
 
+void saveSyncImgs(int count, cv::Mat color, cv::Mat depth, cv::Mat infra1)
+{
+    std::string save_path;
+    if(count >= 0 && count < 10)
+        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/0000" + std::to_string(count) + ".jpg";
+    else if(count >= 10 && count < 100)
+        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/000" + std::to_string(count) + ".jpg";
+    else if(count >= 100 && count < 1000)
+        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/00" + std::to_string(count) + ".jpg";
+    else if(count >= 1000 && count < 10000)
+        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/0" + std::to_string(count) + ".jpg";
+
+    cv::imwrite(save_path, color);
 }
