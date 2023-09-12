@@ -94,13 +94,13 @@ void saveSyncImgs(int count, cv::Mat color, cv::Mat depth, cv::Mat infra1)
 {
     std::string save_path;
     if(count >= 0 && count < 10)
-        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/0000" + std::to_string(count) + ".jpg";
+        save_path = "~/Dataset/kaist/images/0000" + std::to_string(count) + ".jpg";
     else if(count >= 10 && count < 100)
-        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/000" + std::to_string(count) + ".jpg";
+        save_path = "~/Dataset/kaist/images/000" + std::to_string(count) + ".jpg";
     else if(count >= 100 && count < 1000)
-        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/00" + std::to_string(count) + ".jpg";
+        save_path = "~/Dataset/kaist/images/00" + std::to_string(count) + ".jpg";
     else if(count >= 1000 && count < 10000)
-        save_path = "/home/sj/workspace/bag/Dataset/kaist/images/0" + std::to_string(count) + ".jpg";
+        save_path = "~/Dataset/kaist/images/0" + std::to_string(count) + ".jpg";
 
     cv::imwrite(save_path, color);
 }
