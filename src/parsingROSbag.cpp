@@ -52,80 +52,74 @@ void sync_process()
 		std_msgs::Header header;
 
 		m_buf.lock();
-		if(!depth_buf.empty() && !infra1_buf.empty() && !infra2_buf.empty())
+		if(!depth_buf.empty() && !infra1_buf.empty() && !img_buf.empty())
 		{
+			double color_time = img_buf.front() -> header.stamp.toSec();
 			double depth_time  = depth_buf.front() -> header.stamp.toSec();
 			double infra1_time = infra1_buf.front() -> header.stamp.toSec();
-			double infra2_time = infra2_buf.front() -> header.stamp.toSec();
 
-			if(depth_time < infra1_time - 0.003 && infra1_time < infra2_time - 0.003)
+			if(depth_time < infra1_time - 0.003 && infra1_time < color_time - 0.003)
 			{
 				depth_buf.pop();
 				infra1_buf.pop();
 				printf("[Case1] throw depth_img and throw infra1_img\n");
 			}
-			else if(depth_time > infra1_time + 0.003 && infra2_time > depth_time + 0.003)
+			else if(depth_time > infra1_time + 0.003 && color_time > depth_time + 0.003)
 			{
 				infra1_buf.pop();
 				depth_buf.pop();
 				printf("[Case2] throw infra1_img and throw depth_img\n");
 			}
-			else if(infra1_time < infra2_time - 0.003 && infra2_time < depth_time - 0.003)
+			else if(infra1_time < color_time - 0.003 && color_time < depth_time - 0.003)
 			{
 				infra1_buf.pop();
-				infra2_buf.pop();
+				img_buf.pop();
 				printf("[Case3] throw infra1_img and throw infra2_img\n");
 			}
-			else if(infra1_time > infra2_time + 0.003 && depth_time > infra1_time + 0.003)
+			else if(infra1_time > color_time + 0.003 && depth_time > infra1_time + 0.003)
 			{
-				infra2_buf.pop();
+				img_buf.pop();
 				infra1_buf.pop();
 				printf("[Case4] throw infra2_img and throw infra1_img\n");
 			}
-			else if(infra2_time < depth_time - 0.003 && depth_time < infra1_time - 0.003)
+			else if(color_time < depth_time - 0.003 && depth_time < infra1_time - 0.003)
 			{
-				infra2_buf.pop();
+				img_buf.pop();
 				depth_buf.pop();
 				printf("[Case5] throw infra2_img and throw depth_img\n");
 			}
-			else if(infra2_time > depth_time + 0.003 && infra1_time > infra2_time + 0.003)
+			else if(color_time > depth_time + 0.003 && infra1_time > color_time + 0.003)
 			{
 				depth_buf.pop();
-				infra2_buf.pop();
+				img_buf.pop();
 				printf("[Case6] throw depth_img and throw infra2_img\n");
 			}
 			else
 			{
-				header = depth_buf.front()->header;
+				header = img_buf.front()->header;
                 header.frame_id = "world";
 				depth = sensorMsgDepth2cvMat(depth_buf.front());
 				depth_buf.pop();
 				infra1 = sensorMsg2cvMat(infra1_buf.front());
 				infra1_buf.pop();
-				infra2 = sensorMsg2cvMat(infra2_buf.front());
-				infra2_buf.pop();
-
-                while((infra1_info_buf.front()->header.stamp.toSec()) < header.stamp.toSec())
-                    infra1_info_buf.pop();
-                while((infra2_info_buf.front()->header.stamp.toSec()) < header.stamp.toSec())
-                    infra2_info_buf.pop();
-
-                sensor_msgs::CameraInfo infra1_info = *infra1_info_buf.front();
-                infra1_info.header = header;
-                sensor_msgs::CameraInfo infra2_info = *infra2_info_buf.front();
-                infra2_info.header = header;
-
+				img = sensorMsg2cvMat(img_buf.front());
+				img_buf.pop();
+    
                 // Publish Synced Images
                 if(PUBLISH_SYNCED_IMGS)
-                    pubSyncImgs(header, depth, infra1, infra2, infra1_info, infra2_info);
-                
-                infra1_info_buf.pop();
-                infra2_info_buf.pop();
+                    pubSyncImgs(header, img, depth, infra1/*, infra1_info, infra2_info*/);
 
                 // Save Synced Images
-                // if(SAVE_IMG == 0)
-
-
+                if(SAVE_IMG == 1){
+					double cur_time = header.stamp.toSec();
+					double time_diff = cur_time - latest_time;
+					if(time_diff >= 0.33){
+						saveSyncImgs(cnt, img, depth, infra1);
+						latest_time = cur_time;
+						cnt++;
+						std::cout << "cnt: " << cnt << std::endl;
+					}
+				}
             }
 		}
 		m_buf.unlock();
