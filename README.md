@@ -21,12 +21,12 @@
 - /sync_color
 - /sync_depth
 - /sync_infra1
-- /sync_infra2
 
-(2) sensor_msgs::CameraInfo
-- sync_infra1_info
-- sync_infra2_info
-
+(2) Save Sync Color Image (.jpg)
+- If you want to save .png extension image, please go to saveSyncImgs funtion and change .jpg to .png !!
+- Default saved image is **3 FPS** in rosbag time !!
+  - If you want to save more images, then please change double value in `time_diff` statement ! (in this code, setting 0.33)
+  
 ---
 
 
