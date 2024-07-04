@@ -125,12 +125,11 @@ void sync_process()
 					double time_diff = cur_time - latest_time;
 					
 					if(SYNC_GT_TIME){
-						if(isTimeinGT(gt_pose, cur_time)){
+						if(isClose(gt_pose, cur_time, SIM_THRESHOLD)){
 							std::cout << "\033[1;33mSync with GT Pose ! \033[0m" << std::endl;
-							saveSyncImgGT(gt_pose, cur_time, img);
+							saveSyncImgGT(gt_pose, cur_time, img, SIM_THRESHOLD);
 						}
-					}
-
+					}	
 			
 					if(time_diff >= DIFF_THRESHOLD){
 						saveSyncImgs(cnt, img, depth, infra1);
