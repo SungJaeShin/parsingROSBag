@@ -1,4 +1,13 @@
 # parsing ROSBag files with sync data
+### Dependencies
+- OpenCV (with Contrib)
+- Eigen
+- ROS
+- cv_bridge
+- Sensor_mgs
+- Realsense-ros
+
+---
 ### Parameters (in `include.h`)
 (1) `SAVE_IMG`
 - Not save images &rarr; 0
