@@ -38,8 +38,11 @@
 
 // Sync GT time with ROSBAG img
 #define SYNC_GT_TIME true
+// Setting Closing time btw cur Img and GT Img
+#define SIM_THRESHOLD 0.01
 
-std::string gt_path = "/workspace/dataset/ar_table_dataset/groundtruth/table_01.txt";
+
+std::string gt_path = "/workspace/dataset/ar_table_dataset/groundtruth/table_04.txt";
 int sequence = 0;
 int cnt = 1;
 double latest_time = 0;
@@ -75,6 +78,5 @@ struct CoutSettings {
     }
 };
 static CoutSettings coutSettings;
-
 
 #endif

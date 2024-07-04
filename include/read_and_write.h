@@ -9,7 +9,7 @@ std::vector<Pose> loadGTfile()
         return {};
     }
 
-    int cur_cnt = 0;
+    int cur_cnt = 1;
     std::string line;
     std::vector<Pose> gt_pose;
     double t, x, y, z, qx, qy, qz, qw;
@@ -30,6 +30,7 @@ std::vector<Pose> loadGTfile()
         cur_pose.quaternion = Eigen::Quaterniond(qx, qy, qz, qw);
                 
         gt_pose.push_back(cur_pose);
+        cur_cnt++;
     }
 
     return gt_pose;
@@ -50,14 +51,19 @@ void saveSyncImgs(int count, cv::Mat color, cv::Mat depth, cv::Mat infra1)
     cv::imwrite(save_path, color);
 }
 
-void saveSyncImgGT(std::vector<Pose> gt_pose, double cur_time, cv::Mat color)
+void saveSyncImgGT(std::vector<Pose> gt_pose, double cur_time, cv::Mat color, double diff_time)
 {
-    auto it = std::find_if(gt_pose.begin(), gt_pose.end(), [cur_time](Pose pose){
-        return pose.time == cur_time;
+    // auto it = std::find_if(gt_pose.begin(), gt_pose.end(), [cur_time](Pose pose){
+    //     return pose.time == cur_time;
+    // });
+
+    auto it =  std::find_if(gt_pose.begin(), gt_pose.end(), [cur_time, diff_time](Pose pose){
+        return std::fabs(pose.time - cur_time) <= diff_time;
     });
 
-    auto count = it.idx;
-    std::string save_path = "/workspace/dataset/colmap/input/gt_" + std::to_string(count) + ".jpg";
+    int count = it->idx;
+    double time = it->time;
+    std::string save_path = "/workspace/dataset/colmap/input/gt_" + std::to_string(count) + "_" + std::to_string(time) + ".jpg";
     cv::imwrite(save_path, color);
 }
 
