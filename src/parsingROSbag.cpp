@@ -1,3 +1,6 @@
+#include "include.h"
+#include "convert.h"
+#include "read_and_write.h"
 #include "utility.h"
 
 void img_callback(const sensor_msgs::CompressedImageConstPtr &image_msg)
@@ -44,6 +47,13 @@ void infra2_info_callback(const sensor_msgs::CameraInfoConstPtr &imageinfo_msg)
 
 void sync_process()
 {
+    std::vector<Pose> gt_pose;
+    if(SYNC_GT_TIME)
+    {
+	std::cout << "\033[1;33mGet GT Pose ! \033[0m" << std::endl;
+	gt_pose = loadGTfile();
+    }
+	
     while(1)
 	{
 		sequence++;
@@ -113,7 +123,16 @@ void sync_process()
                 if(SAVE_IMG == 1){
 					double cur_time = header.stamp.toSec();
 					double time_diff = cur_time - latest_time;
-					if(time_diff >= 0.33){
+					
+					if(SYNC_GT_TIME){
+						if(isTimeinGT(gt_pose, cur_time)){
+							std::cout << "\033[1;33mSync with GT Pose ! \033[0m" << std::endl;
+							saveSyncImgGT(gt_pose, cur_time, img);
+						}
+					}
+
+			
+					if(time_diff >= DIFF_THRESHOLD){
 						saveSyncImgs(cnt, img, depth, infra1);
 						latest_time = cur_time;
 						cnt++;
