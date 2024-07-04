@@ -29,28 +29,39 @@
 // OPENCV ERROR 
 #include "opencv2/xfeatures2d/nonfree.hpp"
 
-// SAVE_IMG 0; png & 1; jpg 
-#define SAVE_IMG 1
-// Publish Synced Images
-#define PUBLISH_SYNCED_IMGS true
-// To set time difference
-#define DIFF_THRESHOLD 0.25
-
-// Sync GT time with ROSBAG img
-#define SYNC_GT_TIME true
-// Setting Closing time btw cur Img and GT Img
-#define SIM_THRESHOLD 0.01
-
-
-std::string gt_path = "/workspace/dataset/ar_table_dataset/groundtruth/table_04.txt";
 int sequence = 0;
 int cnt = 1;
 double latest_time = 0;
+
+// ROS topics
+std::string COLOR_TOPIC, DEPTH_TOPIC, INFRA1_TOPIC, INFRA2_TOPIC;
+std::string COLOR_INFO, INFRA1_INFO, INFRA2_INFO;
+
+// GT pose path
+std::string GT_PATH;
+
+// SAVE_IMG -> 0; not save & 1; save (.jpg) 
+int SAVE_IMG;
+
+// To set time difference
+double DIFF_THRESHOLD;
+
+// Publish Synced Images
+int PUBLISH_SYNCED_IMGS_CONFIG;
+bool PUBLISH_SYNCED_IMGS;
+
+// Sync GT time with ROSBAG img
+int SYNC_GT_TIME_CONFIG;
+bool SYNC_GT_TIME;
+
+// Setting Closing time btw cur Img and GT Img
+double SIM_THRESHOLD;
 
 std::queue<sensor_msgs::ImageConstPtr> img_buf;
 std::queue<sensor_msgs::ImageConstPtr> depth_buf;
 std::queue<sensor_msgs::CompressedImageConstPtr> infra1_buf;
 std::queue<sensor_msgs::CompressedImageConstPtr> infra2_buf;
+std::queue<sensor_msgs::CameraInfoConstPtr> color_info_buf;
 std::queue<sensor_msgs::CameraInfoConstPtr> infra1_info_buf;
 std::queue<sensor_msgs::CameraInfoConstPtr> infra2_info_buf;
 

@@ -2,7 +2,7 @@
 
 std::vector<Pose> loadGTfile()
 {
-	std::ifstream gtFile(gt_path.c_str());
+	std::ifstream gtFile(GT_PATH.c_str());
 	if(!gtFile.is_open())
     {
         std::cerr << "Cannot open GT file !!" << std::endl;        
@@ -63,7 +63,7 @@ void saveSyncImgGT(std::vector<Pose> gt_pose, double cur_time, cv::Mat color, do
 
     int count = it->idx;
     double time = it->time;
-    std::string save_path = "/workspace/dataset/colmap/input/gt_" + std::to_string(count) + "_" + std::to_string(time) + ".jpg";
+    std::string save_path = "/workspace/dataset/colmap/sync_gt/gt_" + std::to_string(count) + "_" + std::to_string(time) + ".jpg";
     cv::imwrite(save_path, color);
 }
 
