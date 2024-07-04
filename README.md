@@ -18,7 +18,7 @@
 (5) `SIM_THRESHOLD`
 - To set GT boundary near by current image &rarr; ${VALUE}
 
-(6) std::string gt_path
+(6) `std::string gt_path`
 - To write GT absolute path &rarr; ${STRING}
 
 ---
