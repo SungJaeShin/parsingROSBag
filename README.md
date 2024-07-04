@@ -61,6 +61,31 @@
 
 (3) Save the Image Concerning Sync Color time and GT time Image (.jpg)
 - You can set the time to sync with gt. By adjusting `SIM_THRESHOLD`, you can set an image that fits the range of GT ! (in this code, setting 0.01)
+
+---
+### Exmaple
+- example of [ar table dataset](https://github.com/rpng/ar_table_dataset.git) 
+  - In the result, the only image is saved as **00002.jpg**, and the image parsed according to GT time is saved as **gt_2_1662915732.374960.jpg**.
+
+<table>
+  <tr>
+    <td> GT text file (looking at Line 2)</td>
+  </tr>   
+  <tr>
+    <td> <img src="./example/gt_txt.png"/> </td>
+  </tr> 
+</table>
+
+<table>
+  <tr>
+     <td> Only image parsing </td>
+     <td> Parsing image depend on GT time (line 2) </td>
+  </tr> 
+  <tr>
+     <td> <img src="./example/00002.jpg"/> </td>
+     <td> <img src="./example/gt_2_1662915732.374960.jpg"/> </td>
+  </tr>
+</table>
   
 ---
 ### Future Work
