@@ -1,10 +1,14 @@
+#ifndef INCLUDE
+#define INCLUDE
+
 #include <ros/ros.h>
 #include <iostream>
 #include <fstream>
-#include <iostream>
+#include <cstdio>
 #include <thread>
 #include <mutex>
 #include <queue>
+#include <algorithm>
 #include <eigen3/Eigen/Dense>
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CompressedImage.h"
@@ -29,12 +33,18 @@
 #define SAVE_IMG 1
 // Publish Synced Images
 #define PUBLISH_SYNCED_IMGS true
+// To set time difference
+#define DIFF_THRESHOLD 0.25
 
+// Sync GT time with ROSBAG img
+#define SYNC_GT_TIME true
+
+std::string gt_path = "/workspace/dataset/ar_table_dataset/groundtruth/table_01.txt";
 int sequence = 0;
 int cnt = 1;
 double latest_time = 0;
 
-std::queue<sensor_msgs::CompressedImageConstPtr> img_buf;
+std::queue<sensor_msgs::ImageConstPtr> img_buf;
 std::queue<sensor_msgs::ImageConstPtr> depth_buf;
 std::queue<sensor_msgs::CompressedImageConstPtr> infra1_buf;
 std::queue<sensor_msgs::CompressedImageConstPtr> infra2_buf;
@@ -49,3 +59,22 @@ ros::Publisher pub_infra1_info;
 ros::Publisher pub_infra2_info;
 
 std::mutex m_buf;
+
+struct Pose
+{
+    int idx;
+    double time;
+    Eigen::Vector3d translation;
+    Eigen::Quaterniond quaternion;
+};
+
+// Setting default precision for std::cout globally
+struct CoutSettings {
+    CoutSettings() {
+        std::cout << std::fixed << std::setprecision(5);
+    }
+};
+static CoutSettings coutSettings;
+
+
+#endif
