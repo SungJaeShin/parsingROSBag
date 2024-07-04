@@ -8,7 +8,7 @@
 - Realsense-ros
 
 ---
-### Parameters (in `include.h`)
+### Parameters (`config.yaml` in config folder)
 (1) `SAVE_IMG`
 - Not save images &rarr; 0
 - Save images &rarr; 1
@@ -29,6 +29,19 @@
 
 (6) `std::string gt_path`
 - To write GT absolute path &rarr; ${STRING}
+
+---
+### Build and Run
+Clone the repository and build and run simultaneously:
+```
+   $ cd catkin_ws/src
+   $ git clone https://github.com/SungJaeShin/parsingROSBag.git
+   $ cd ../../
+   $ catkin config -DCMAKE_BUILD_TYPE=Release
+   $ catkin build parsingROSBag
+   $ source devel/setup.bash
+   $ sh start_parsing.sh
+```
 
 ---
 ### Input Data
@@ -90,4 +103,3 @@
 ---
 ### Future Work
 - I will sync all other images !
-- Parameters in include.h will be changed to config.yaml !
