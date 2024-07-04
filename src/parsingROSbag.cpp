@@ -3,7 +3,7 @@
 #include "read_and_write.h"
 #include "utility.h"
 
-void img_callback(const sensor_msgs::CompressedImageConstPtr &image_msg)
+void img_callback(const sensor_msgs::ImageConstPtr &image_msg)
 {
 	m_buf.lock();
 	img_buf.push(image_msg);
@@ -28,6 +28,13 @@ void infra2_callback(const sensor_msgs::CompressedImageConstPtr &image_msg)
 {
 	m_buf.lock();
 	infra2_buf.push(image_msg);
+	m_buf.unlock();
+}
+
+void color_info_callback(const sensor_msgs::CameraInfoConstPtr &imageinfo_msg)
+{
+	m_buf.lock();
+	color_info_buf.push(imageinfo_msg);
 	m_buf.unlock();
 }
 
@@ -151,7 +158,16 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "parsing_and_sync_ROSBag");
     ros::NodeHandle nh;
-
+	
+    // Get config info
+    if(argc != 2)
+    {
+        printf("please intput: rosrun parsingROSbag parsing_and_sync_ROSBag [config file] \n");
+        return 0;
+    }
+    std::string config_file = argv[1];
+    readParameters(config_file);
+	
     pub_img = nh.advertise<sensor_msgs::Image>("sync_color", 1000);
     pub_depth = nh.advertise<sensor_msgs::Image>("sync_depth", 1000);
     pub_infra1 = nh.advertise<sensor_msgs::Image>("sync_infra1", 1000);
@@ -159,13 +175,14 @@ int main(int argc, char** argv)
     pub_infra1_info = nh.advertise<sensor_msgs::CameraInfo>("sync_infra1_info", 1000);
     pub_infra2_info = nh.advertise<sensor_msgs::CameraInfo>("sync_infra2_info", 1000);
 
-    ros::Subscriber sub_img =  nh.subscribe("/camera/camera/color/image_raw/compressed", 1000, img_callback);
-    ros::Subscriber sub_depth =  nh.subscribe("/camera/camera/depth/image_rect_raw", 1000, depth_callback);
-    ros::Subscriber sub_infra1 =  nh.subscribe("/camera/camera/infra1/image_rect_raw/compressed", 1000, infra1_callback);
-    ros::Subscriber sub_infra2 =  nh.subscribe("/camera/camera/infra2/image_rect_raw/compressed", 1000, infra2_callback);
+    ros::Subscriber sub_img =  nh.subscribe(COLOR_TOPIC, 1000, img_callback);
+    ros::Subscriber sub_depth =  nh.subscribe(DEPTH_TOPIC, 1000, depth_callback);
+    ros::Subscriber sub_infra1 =  nh.subscribe(INFRA1_TOPIC, 1000, infra1_callback);
+    ros::Subscriber sub_infra2 =  nh.subscribe(INFRA2_TOPIC, 1000, infra2_callback);
 
-    ros::Subscriber sub_infra1_info =  nh.subscribe("/camera/camera/infra1/camera_info", 1000, infra1_info_callback);
-    ros::Subscriber sub_infra2_info =  nh.subscribe("/camera/camera/infra2/camera_info", 1000, infra2_info_callback);
+    ros::Subscriber sub_color_info =  nh.subscribe(COLOR_INFO, 1000, color_info_callback);
+    ros::Subscriber sub_infra1_info =  nh.subscribe(INFRA1_INFO, 1000, infra1_info_callback);
+    ros::Subscriber sub_infra2_info =  nh.subscribe(INFRA2_INFO, 1000, infra2_info_callback);
 
     std::thread sync_thread{sync_process};
     ros::spin();
