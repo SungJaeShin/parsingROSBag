@@ -4,7 +4,7 @@
 - Eigen
 - ROS
 - cv_bridge
-- Sensor_mgs
+- sensor_msgs
 - Realsense-ros
 
 ---
