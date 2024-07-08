@@ -27,7 +27,7 @@ std::vector<Pose> loadGTfile()
         cur_pose.idx = cur_cnt;
         cur_pose.time = t;
         cur_pose.translation = Eigen::Vector3d(x, y, z);
-        cur_pose.quaternion = Eigen::Quaterniond(qx, qy, qz, qw);
+        cur_pose.quaternion = Eigen::Quaterniond(qw, qx, qy, qz);
                 
         gt_pose.push_back(cur_pose);
         cur_cnt++;
