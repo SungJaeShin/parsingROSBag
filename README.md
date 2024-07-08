@@ -101,5 +101,9 @@ Clone the repository and build and run simultaneously:
 </table>
   
 ---
+### Acknowledgement
+Thank you Alvin Jinsung Choi for correcting the code error!
+
+---
 ### Future Work
 - I will sync all other images !
